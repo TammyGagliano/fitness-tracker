@@ -1,33 +1,68 @@
+const router = require('express').Router();
+
 //db
-const db = require('../models')
-module.exports = (app) => {
+const db = require("../models");
 
-    //get all
-    app.get("/api/workouts", (req, res) => {
-        db.Workout.find({}, (err, workouts) => {
-            if(err){
-                console.log(err);
-            } else {
-                res.json(workouts)
-            }
-        });
-    });
+  // Get all workouts 
+  router.get("/api/workouts", (req, res) => {
+    db.Workout.find({})
+      .then(workout => {
+        res.json(workout);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+  });
 
-    //add exercise, set id, push to model, set true
-    app.put("/api/workouts/:workout", ({ params, body }, res) => {
-        db.Workout.findOneAndUpdate({ _id: params.id},
-                                    {$push: {excercises:body }},
-                                    { upsert: true, useFindandModify:false},
-                                    updatedWorkout => {
-                                        res.json(updatedWorkout);
-                                    })
-    });
+  // Creates a new workout in the workout database
+  router.post("/api/workouts", async (req, res) => {
+    try {
+      const response = await db.Workout.create({ type: "workout" });
+      res.json(response);
+    } catch (err) {
+      console.log("An error occurred creating a workout: ", err);
+    }
+  });
 
-    //create new workout
-    app.post('/api/workouts', (req,res) => {
-        db.Workout.create({}).then(newWorkout => {
-            res.json(newWorkout);
-        });
-    });
+  // Adds an exercise, set id, push to model, set true
+  router.put("/api/workouts/:id", ({ body, params }, res) => {
+    // console.log(body, params)
+    const workoutId = params.id;
+    let savedExercises = [];
 
-}
+    // gets all the currently saved exercises in the current workout
+    db.Workout.find({ _id: workoutId })
+      .then(dbWorkout => {
+        // console.log(dbWorkout)
+        savedExercises = dbWorkout[0].exercises;
+        res.json(dbWorkout[0].exercises);
+        let allExercises = [...savedExercises, body];
+        console.log(allExercises);
+        updateWorkout(allExercises);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+
+    function updateWorkout(exercises) {
+      db.Workout.findByIdAndUpdate(
+        workoutId,
+        { exercises: exercises },
+        function (err, doc) {
+          if (err) {
+            console.log(err);
+          }
+        })}
+  })
+
+  router.get("/api/workouts/range", (req, res) => {
+    db.Workout.find({})
+      .then(workout => {
+        res.json(workout);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+  });
+
+module.exports = router;
