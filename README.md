@@ -25,7 +25,7 @@ If cloning to personal machine, open repository in terminal and confirm you're w
 ## Contributions
 Tammy Gagliano
 * GitHub: https://github.com/TammyGagliano/fitness-tracker
-* Heroku: https://tg-fitness-tracker.herokuapp.com/
+* * Heroku: https://tg-fitness-tracker.herokuapp.com/
 
 ## Screenshot 
 ![Fitness Tracker](./fitnessscreenshot.png)
