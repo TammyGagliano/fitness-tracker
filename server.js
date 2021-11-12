@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Mongoose connect (workout database) and also added extra info for deprecations
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populate", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/populate", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false });
 
 // Routes 
 app.use(require("./routes/apiRoutes"));
